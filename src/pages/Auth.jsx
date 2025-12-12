@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Checkbox, Label, TextInput } from "flowbite-react";
 import './Auth.css'
-import { registerUserAPI } from '../services/allAPIs';
+import { loginUserAPI, registerUserAPI } from '../services/allAPIs';
 import { useNavigate } from 'react-router-dom';
 
 function Auth({ register }) {
@@ -22,12 +22,14 @@ function Auth({ register }) {
       try {
         const response = await registerUserAPI(userData);
         console.log(response);
-        if (response.status === 201) {
-          alert("Registration Successful!");
+        if (response.status === 200) {
+          // alert("Registration Successful!");
+          alert(response.data.message)
           navigate('/login');
         } else {
           alert("Registration Failed! ");
-          console.log(response.response.data.message);
+           alert(response.data.message)
+          console.log(response.response.data);
 
         }
       }
@@ -36,6 +38,33 @@ function Auth({ register }) {
       }
     }
 
+  }
+
+  const handleLogin=async()=>{
+
+    console.log(userData)
+    const {email,password}=userData
+    if( !email || !password){
+      alert("please fill the form")
+    }
+    else{
+      try{
+
+        // api all 
+        const response = await loginUserAPI({email,password})
+        console.log(response)
+
+        if(response.status==200){
+          alert(response.data.message)
+        }else{
+          alert(response.response.data)
+        }
+        
+      }catch(err){
+        console.log(err)
+
+      }
+    }
   }
 
   return (
@@ -75,7 +104,9 @@ function Auth({ register }) {
               <Label htmlFor="remember">Remember me</Label>
             </div>
             {
-              register ? <Button onClick={handleRegister} className='text-amber-950 !bg-amber-100' type="button">SignUp</Button> : <Button className='text-amber-950 !bg-amber-100' type="submit">SignIn</Button>
+              register ? <Button onClick={handleRegister} className='text-amber-950 !bg-amber-100' type="button">SignUp</Button> : 
+              <Button className='text-amber-950 !bg-amber-100' type="button"
+              onClick={handleLogin}>SignIn</Button>
             }
           </form>
         </div>
